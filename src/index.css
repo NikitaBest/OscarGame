@@ -1,0 +1,86 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: fixed;
+  touch-action: none;
+  background: #87CEEB; /* Голубой фон для мобильных */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh; /* Динамическая высота viewport для мобильных */
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  overscroll-behavior: none;
+  /* Предотвращение масштабирования на iOS */
+  touch-action: pan-x pan-y pinch-zoom;
+  background: #87CEEB; /* Голубой фон для мобильных */
+}
+
+/* Мобильные устройства - голубой фон на всю страницу */
+@media (max-width: 768px) {
+  html {
+    background: linear-gradient(to bottom, #87CEEB 0%, #98D8E8 100%);
+  }
+  
+  body {
+    background: linear-gradient(to bottom, #87CEEB 0%, #98D8E8 100%);
+  }
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Предотвращение выделения текста на мобильных */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* Оптимизация для мобильных браузеров */
+@supports (-webkit-touch-callout: none) {
+  body {
+    /* iOS Safari */
+    height: -webkit-fill-available;
+  }
+  
+  #root {
+    height: -webkit-fill-available;
+  }
+  
+  .game-container {
+    height: -webkit-fill-available;
+  }
+}

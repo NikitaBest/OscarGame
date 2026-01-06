@@ -1,0 +1,49 @@
+.unicorn {
+  position: absolute;
+  transform: translateX(-50%);
+  z-index: 10;
+  transition: top 0.05s linear;
+  pointer-events: none;
+  will-change: top;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.unicorn-image {
+  width: 60px;
+  height: auto;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+/* Мобильные устройства */
+@media (max-width: 768px) {
+  .unicorn-image {
+    width: 55px;
+  }
+}
+
+/* Маленькие мобильные устройства */
+@media (max-width: 480px) {
+  .unicorn-image {
+    width: 50px;
+  }
+}
+
+/* Очень маленькие экраны */
+@media (max-width: 360px) {
+  .unicorn-image {
+    width: 45px;
+  }
+}
+
+/* Ландшафтная ориентация */
+@media (orientation: landscape) and (max-height: 500px) {
+  .unicorn-image {
+    width: 45px;
+  }
+}
+

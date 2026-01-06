@@ -1,0 +1,89 @@
+.basket {
+  position: fixed;
+  bottom: 40px; /* Персонаж заходит на пол, нижняя часть перекрывает пол */
+  bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: flex-end; /* Выравнивание по нижнему краю */
+  justify-content: center;
+  transition: left 0.1s linear;
+  will-change: left;
+  /* Предотвращаем выход за границы экрана */
+  min-width: 0;
+  max-width: 100vw;
+}
+
+.character-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.basket-character {
+  width: 150px;
+  height: auto;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+  pointer-events: none;
+  display: block;
+  /* Убираем черный фон через mix-blend-mode */
+  /* screen делает черный прозрачным, сохраняя другие цвета */
+  mix-blend-mode: screen;
+  transition: transform 0.1s ease;
+}
+
+/* Зеркальное отражение для движения вправо */
+.basket-character.mirrored {
+  transform: scaleX(-1);
+}
+
+/* Мобильные устройства */
+@media (max-width: 768px) {
+  .basket {
+    bottom: 35px; /* Персонаж заходит на пол */
+    bottom: calc(35px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .basket-character {
+    width: 130px;
+  }
+}
+
+/* Маленькие мобильные устройства */
+@media (max-width: 480px) {
+  .basket {
+    bottom: 30px; /* Персонаж заходит на пол */
+    bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .basket-character {
+    width: 120px;
+  }
+}
+
+/* Очень маленькие экраны */
+@media (max-width: 360px) {
+  .basket {
+    bottom: 30px;
+    bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .basket-character {
+    width: 110px;
+  }
+}
+
+/* Ландшафтная ориентация */
+@media (orientation: landscape) and (max-height: 500px) {
+  .basket {
+    bottom: 25px;
+    bottom: calc(25px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .basket-character {
+    width: 100px;
+  }
+}
+
