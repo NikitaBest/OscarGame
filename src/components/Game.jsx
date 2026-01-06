@@ -55,7 +55,8 @@ function Game() {
       treeNumber: spawnPoint.treeNumber,
       treeTop: spawnPoint.treeTop,
       treeStartX: startX,
-      slidingDown: false // Флаг сползания с дерева
+      slidingDown: false, // Флаг сползания с дерева
+      runningAway: false // Флаг убегания пони
     };
     
     setUnicorns(prev => [...prev, newUnicorn]);
@@ -84,6 +85,20 @@ function Game() {
         let livesLost = 0; // Счетчик потерянных жизней в этом кадре
         
         const updated = prev.map(unicorn => {
+          // Если пони убегает, двигаем его горизонтально
+          if (unicorn.runningAway) {
+            // Определяем направление убегания (влево если x < 50, вправо если x >= 50)
+            const runSpeed = 4; // Скорость убегания (увеличена для более заметного эффекта)
+            const newX = unicorn.x < 50 
+              ? unicorn.x - runSpeed // Убегает влево
+              : unicorn.x + runSpeed; // Убегает вправо
+            
+            return {
+              ...unicorn,
+              x: newX
+            };
+          }
+          
           // Проверяем все деревья для столкновения
           const allTrees = [
             { side: 'left', treeNumber: 1, treeTop: 20, treeStartX: 0 },
@@ -111,7 +126,7 @@ function Game() {
           
           // Проверяем столкновение со всеми деревьями
           let hitTree = null;
-          if (!unicorn.onTree && !unicorn.slidingDown) {
+          if (!unicorn.onTree && !unicorn.slidingDown && !unicorn.runningAway) {
             for (const tree of allTrees) {
               const tTop = tree.treeTop;
               const tBottom = tTop + TREE_HEIGHT;
@@ -207,7 +222,25 @@ function Game() {
             };
           }
           
-          // Пони падает вертикально (не попал на дерево)
+          // Проверяем, нужно ли начать убегать (упал ниже корзины)
+          const currentBasketPosition = basketPositionRef.current;
+          const basketLeft = currentBasketPosition - BASKET_WIDTH / 2;
+          const basketRight = currentBasketPosition + BASKET_WIDTH / 2;
+          const basketTop = 100 - BASKET_BOTTOM - BASKET_HEIGHT;
+          const basketBottom = 100 - BASKET_BOTTOM;
+          
+          // Если единорог упал ниже корзины и не пойман - начинаем убегать
+          if (!unicorn.runningAway && unicorn.y >= basketBottom) {
+            // Устанавливаем пони на уровень пола и начинаем убегать
+            const floorLevel = 100 - BASKET_BOTTOM; // Уровень пола (примерно 88%)
+            return {
+              ...unicorn,
+              y: floorLevel,
+              runningAway: true
+            };
+          }
+          
+          // Пони падает вертикально (не попал на дерево и не убегает)
           const newY = unicorn.y + 1.5;
           
           // Пони падает вертикально (не на дереве и не попал на дерево)
@@ -227,7 +260,7 @@ function Game() {
           const basketBottom = 100 - BASKET_BOTTOM;
 
           // Если единорог в зоне корзины - пойман
-          if (unicorn.y >= basketTop && unicorn.y <= basketBottom) {
+          if (!unicorn.runningAway && unicorn.y >= basketTop && unicorn.y <= basketBottom) {
             if (unicorn.x >= basketLeft && unicorn.x <= basketRight) {
               // Пойман единорог
               setScore(prev => prev + 1);
@@ -235,18 +268,20 @@ function Game() {
             }
           }
 
-          // Если единорог упал ниже корзины и не пойман - отнимаем одну жизнь
-          if (unicorn.y > basketBottom + 5) {
+          // Если единорог упал ниже корзины и начал убегать - отнимаем жизнь
+          if (unicorn.runningAway) {
             // Проверяем, не отнял ли уже этот пони жизнь (по ID)
             if (!processedUnicornsRef.current.has(unicorn.id)) {
               livesLost++; // Увеличиваем счетчик потерянных жизней
               // Помечаем пони, чтобы он не отнял жизнь повторно
               processedUnicornsRef.current.add(unicorn.id);
             }
-            return false; // удаляем пони
+            
+            // Удаляем единорогов, которые убежали за экран (влево или вправо)
+            return unicorn.x > -10 && unicorn.x < 110; // Оставляем небольшой запас
           }
 
-          // Удаляем единорогов, которые упали за экран
+          // Удаляем единорогов, которые упали за экран сверху
           return unicorn.y < 100;
         });
         
